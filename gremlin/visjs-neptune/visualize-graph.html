@@ -55,7 +55,7 @@
     <link href="vis-network.min.css" rel="stylesheet" type="text/css" />
 
     <script type="text/javascript">
-        var PROXY_API_URL = "https://vr6cx4jz7i.execute-api.eu-west-1.amazonaws.com/test";
+        var PROXY_API_URL = "https://xvqsswswq8.execute-api.us-east-2.amazonaws.com/test";
         // var nodes = null;
         var edges = null;
         var network = null;
@@ -80,7 +80,7 @@
         $(document).ready(function(){
 
             console.log('Initializing the page..and loading the values in the Search LoV');
-            $.get(PROXY_API_URL + "/initialize", function(data) {
+            $.get(PROXY_API_URL + "/initialize/ig", function(data) {
                     console.log(data);
                     var js=JSON.parse(JSON.stringify(data))
                     searchfill=[];
@@ -117,7 +117,7 @@
                 var touser = username.substring(0,username.length-1)
                 touser = touser+nextletter;
 
-                $.get(PROXY_API_URL + "/search?username="+username+"&touser="+touser, function(data) {
+                $.get(PROXY_API_URL + "/search/ig?username="+username+"&touser="+touser, function(data) {
                     var resp = JSON.parse(JSON.stringify(data));
                     console.log(resp);
                     var x=0;
@@ -125,6 +125,12 @@
                     for(let i=0;i< resp.length;i++) {
                         try {
                             nodes.add({id:resp[i].id, label:resp[i].name[0], value:resp[i].label, color: 'red', font: {color:'white'}});
+                            console.log(nodes.get(resp[i].id).value);
+
+                            callneptunegetneighbours(resp[i].id, nodes, edges);
+
+                            callneptunegettweets(resp[i].id, nodes, edges);
+
                         }
                         catch (e) { //if node is already added just continue
                             //throw e;
@@ -203,7 +209,7 @@
         function whichusersliketweet(fromnode, nodes, edges)
         {
             console.log('inside whichusersliketweet');
-            $.get(PROXY_API_URL + "/whichusersliketweet?tweetid="+fromnode, function(data) {
+            $.get(PROXY_API_URL + "/whichusersliketweet/ig?tweetid="+fromnode, function(data) {
                 console.log(data);
                 var resp = JSON.parse(JSON.stringify(data));
                 console.log(resp);
@@ -239,7 +245,7 @@
         function callneptunegettweets(fromnode, nodes, edges)
         {
             console.log('inside callneotunegettweets');
-            $.get(PROXY_API_URL + "/getusertweets?userid="+fromnode, function(data) {
+            $.get(PROXY_API_URL + "/getusertweets/ig?userid="+fromnode, function(data) {
                 console.log(data);
                 var resp = JSON.parse(JSON.stringify(data));
                 console.log(resp);
@@ -274,7 +280,7 @@
             var xhr = new XMLHttpRequest();
             var  resparr;
             const Http = new XMLHttpRequest();
-            const url = PROXY_API_URL + '/neighbours?id='+fromnode;
+            const url = PROXY_API_URL + '/neighbours/ig?id='+fromnode;
             Http.open("GET", url);
             Http.send();
             Http.onreadystatechange = (e) =>
